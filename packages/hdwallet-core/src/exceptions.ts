@@ -105,7 +105,7 @@ export class FirmwareUpdateRequired extends HDWalletError {
 export class WebUSBNotAvailable extends HDWalletError {
   constructor() {
     super(
-      `WebUSB is not available in this browser. We recommend trying Chrome.`,
+      `WebUSB is not available in this browser. We recommend trying Chrome, or loading this page through your localhost`,
       HDWalletErrorType.WebUSBNotAvailable
     );
   }

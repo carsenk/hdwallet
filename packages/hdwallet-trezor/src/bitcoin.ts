@@ -35,6 +35,7 @@ function translateCoin(coin: Coin): string {
     DigiByte: "dgb",
     Testnet: "testnet",
     Dogecoin: "doge",
+    Denarius: "d",
   }[coin];
 }
 

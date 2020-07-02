@@ -67,7 +67,8 @@ const supportedCoins = [
   "Testnet",
   "BitcoinCash",
   "BitcoinGold",
-  "Litecoin",
+  "Litecoin",  
+  "Denarius",
   "Dash",
   "DigiByte",
   "Dogecoin",
@@ -213,6 +214,8 @@ function prepareSignTx(
   const txmap = {}; // Create a map of transactions by txid needed for the KeepKey signing flow.
   txmap["unsigned"] = unsignedTx;
 
+  console.log('UNSIGNED TRANSACTION!!!!!!!!!!!!!!!!!!!!!!!!!\n' + unsignedTx);
+
   const forceBip143Coins = ["BitcoinGold", "BitcoinCash", "BitcoinSV"];
   if (forceBip143Coins.includes(coin)) return txmap;
 
@@ -253,10 +256,12 @@ function prepareSignTx(
 
     inputTx.tx.vout.forEach((vout, i) => {
       const txOutput = new TxOutputBinType();
-      txOutput.setAmount(satsFromStr(vout.value));
+      txOutput.setAmount(satsFromStr(String(vout.value))); //satsFromStr(vout.value) Denarius doesnt output strings for raw tx info
       txOutput.setScriptPubkey(fromHexString(vout.scriptPubKey.hex));
       tx.addBinOutputs(txOutput, i);
     });
+
+    //Maybe Denarius needs DIP support?
 
     if (coin === "Dash") {
       let dip2_type: number = inputTx.tx.type || 0;
@@ -534,7 +539,7 @@ export async function btcSignTx(
       }
     } catch (error) {
       console.error({ error });
-      throw new Error("Failed to sign BTC transaction");
+      throw new Error("KeepKey Failed to Sign Denarius transaction");
     }
 
     if (signatures.includes(null)) {
@@ -642,6 +647,7 @@ export function btcGetAccountPaths(
       Dash: [bip44],
       DigiByte: [bip44, bip49, bip84],
       Dogecoin: [bip44],
+      Denairus: [bip44],
       Testnet: [bip44, bip49, bip84],
       BitcoinCash: [bip44, btcLegacy],
       BitcoinSV: [bip44, bchLegacy, btcLegacy],

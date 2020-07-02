@@ -81,8 +81,7 @@ export class WebUSBKeepKeyAdapter {
   ): Promise<number> {
     if (!(window && window.navigator.usb)) throw new WebUSBNotAvailable();
 
-    const devicesToInitialize =
-      devices || (await window.navigator.usb.getDevices());
+    const devicesToInitialize = devices || (await window.navigator.usb.getDevices());
 
     let errors = [];
     for (let i = 0; i < devicesToInitialize.length; i++) {

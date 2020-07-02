@@ -948,7 +948,7 @@ export class KeepKeyHDWallet
   // ChangePin requests setting/changing the pin
   public async changePin(): Promise<void> {
     const changePin = new Messages.ChangePin();
-    // User may be propmpted for button press up to 2 times
+    // User may be prompted for button press up to 2 times
     await this.transport.call(
       Messages.MessageType.MESSAGETYPE_CHANGEPIN,
       changePin,
