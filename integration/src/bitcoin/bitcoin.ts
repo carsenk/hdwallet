@@ -424,6 +424,7 @@ export function bitcoinTests(
             ["Litecoin", 1, BTCInputScriptType.SpendP2SHWitness],
             ["Dash", 0, BTCInputScriptType.SpendAddress],
             ["Dogecoin", 0, BTCInputScriptType.SpendAddress],
+            ["Denarius", 0, BTCInputScriptType.SpendAddress],
             ["BitcoinCash", 0, BTCInputScriptType.SpendAddress],
             ["BitcoinGold", 0, BTCInputScriptType.SpendAddress],
           ],

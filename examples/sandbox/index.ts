@@ -71,6 +71,12 @@ const $rawtxreturn = $("#rawtxhex");
 //const $inputlabel = $("#inputlabel").value;
 const $popupinput = $('#popupinput');
 const $submitload = $('#submitload');
+const $submitdevice = $('#submitdevice');
+const $popupsure = $('#popupsure');
+const $seedphrase = $('#seedphrase');
+const $bip39pass = $('#bip39pass');
+const $seedlabel = $('#seedlabel');
+const $keepkeygraphic = $("#kkgraphic");
 
 $keepkey.on("click", async (e) => {
   e.preventDefault();
@@ -98,9 +104,14 @@ $keepkey.on("click", async (e) => {
 
     $modelinfo.text(" - Model: " + modeli);
 
+    $keepkeygraphic.removeClass("unplugged");
+    $keepkeygraphic.addClass("keepkey");
+
     $keepkey.hide();
     $thenextbutton.show();
     $reset.show();
+    $recovery.show();
+    $pinswap.show();
 
   } catch(e) {
     $pairtitle.text("An Error Occured, Try to refresh");
@@ -143,8 +154,6 @@ $keepkey2.on("click", async (e) => {
   };
 });
 
-
-
 async function deviceConnected(deviceId) {
   let wallet = keyring.get(deviceId);
   if (!$keyring.find(`option[value="${deviceId}"]`).length) {
@@ -176,7 +185,7 @@ async function deviceConnected(deviceId) {
       if (wallet.transport) {
         await wallet.transport.connect();
         if (isKeepKey(wallet)) {
-          console.log("try connect debuglink");
+          //console.log("try connect debuglink");
           await wallet.transport.tryConnectDebugLink();
         }
       }
@@ -217,6 +226,7 @@ window["pinEntered"] = function () {
   let input = document.getElementById("#pinInput");
   wallet.sendPin(input.value);
   document.getElementById("#pinModal").className = "modale";
+  input.value = "";
 };
 
 window["passphraseOpen"] = function () {
@@ -332,6 +342,14 @@ $thenextbutton.on("click", async (e) => {
 
 $nextbuttontx.on("click", async (e) => {
   e.preventDefault();
+
+  // wallet = await keepkeyAdapter.pairDevice(undefined, /*tryDebugLink=*/ true);
+  // listen(wallet.transport);
+  // window["wallet"] = wallet;
+  // $("#keyring select").val(wallet.transport.getDeviceID());
+
+  document.getElementById("passphraseModal").className = "modale opened";
+
   if (!wallet) {
     $pairtitle.text("No wallet?");
     return;
@@ -340,19 +358,19 @@ $nextbuttontx.on("click", async (e) => {
     //this works const txid = "1de79c706f34c81bbefad49a9ff8d12b6ca86b77605a1998505e4f8792a5892d";
     const txid = "fb11728d7afbf705279dbe3ce8d964b903b23d1d75cda3e0b27b24e008321dca";
     // this works const hex = "010000000196f5704ef948abb958f32ff216112d3283142baf50723833c378882c14a9adea010000006a47304402207c899ba5197a23b1f3cc4b3621abbc682b5142f3ae29af4b951952573f6c82a002203fd7f038aa8403d2c06fd32c237ab4e915939c25aafa7bcb06fb0ddd46afbfd3012103eddbce765b6d7ae1c91b779696e8b8f72ce444070f83beba2f823af76fd4dfebffffffff0290680a00000000001976a91491e975a0238fa1dfff703e50f062e2544a3e372088aca6791100000000001976a91415757f526dc67b52ae9f74918db532eebc39608688ac00000000";
-    const hex ="010000003b4afc5e01acf0bb4ad63d880e590b80c5a3ee66e950fddeb8c5cc72578a1c89bbcf597251010000006a473044022003ddac31ed3d2dffc50169c0bcece812207876467d9863d78d6064d92349b915022066fc8187ec60dbff205878c570e13f7ca5377ebb8b5181d206a844f968942de6012103f5b29d1f63e06568912c4ca0ca2bf8827ed2bef532446ef3d379590e0d3316aeffffffff02a0bb0d00000000001976a914032c2288699a64540e81e9980b3e6598040ba10288aca8609200000000001976a9145ef9da5d87a0c17eb8dc08ad4c14ab948af8777b88ac00000000";
+    const hex = "010000003b4afc5e01acf0bb4ad63d880e590b80c5a3ee66e950fddeb8c5cc72578a1c89bbcf597251010000006a473044022003ddac31ed3d2dffc50169c0bcece812207876467d9863d78d6064d92349b915022066fc8187ec60dbff205878c570e13f7ca5377ebb8b5181d206a844f968942de6012103f5b29d1f63e06568912c4ca0ca2bf8827ed2bef532446ef3d379590e0d3316aeffffffff02a0bb0d00000000001976a914032c2288699a64540e81e9980b3e6598040ba10288aca8609200000000001976a9145ef9da5d87a0c17eb8dc08ad4c14ab948af8777b88ac00000000";
     // Raw TX HEX of TXID getrawtransaction
 
     const inputs = [
       {
         addressNList: denariusBip44.addressNList.concat([0, 0]),
         scriptType: BTCInputScriptType.SpendAddress,
-        amount: String(21602580),
+        amount: String(10494000), //Input of 0.10494 D?
         vout: 1, 
-        txid,
+        txid: txid,
         segwit: false,
         tx: dTxJson,
-        hex,
+        hex: hex,
       },
     ];
 
@@ -361,7 +379,7 @@ $nextbuttontx.on("click", async (e) => {
         address: "DFaSN5xF8Y7o9ifFuBcHQsub9UoT3yn7kx",
         addressType: BTCOutputAddressType.Spend,
         scriptType: BTCOutputScriptType.PayToAddress,
-        amount: String(261614), //Send 0.00261614 D //Wants to spend 355.77118484 D on fees //Really want to send 355.77380098 D? Total of vout n 1
+        amount: String(261614 - 10000), //Send 0.00261614 - network fee of 0.00001 D //Wants to spend 355.77118484 D on fees //Really want to send 355.77380098 D? Total of vout n 1
         isChange: false,
       },
     ];
@@ -437,8 +455,7 @@ $reset.on("click", async (e) => {
     $pairtitle.text("No wallet?");
     return;
   }
-  $recovery.show();
-  $pinswap.show();
+
   $pairtitle.text("✅ Check Device");
   wallet.wipe();
   $reset.hide();
@@ -471,7 +488,8 @@ $pinswap.on("click", async (e) => {
   // $pairtitle.text("✅ Check Device");
 });
 
-$submitload.on("click", async (e) => {
+
+$submitdevice.on("click", async (e) => {
   e.preventDefault();
   if (!wallet) {
     $pairtitle.text("No wallet?");
@@ -479,29 +497,82 @@ $submitload.on("click", async (e) => {
   }
 
   // const $inputmem = $("#inputmem").value;
+  ///// WORK IN PROGRESS
 
-  const $inputmem = document.getElementById("inputmem").value;
-  const $inputlabel = document.getElementById("inputlabel").value;
-  // document.getElementById("demo").innerHTML = x;
+  const $seedphrase = document.getElementById("seedphrase").innerHTML;
+  const $seedlabel = document.getElementById("seedlabel").innerHTML;
+  const $bip39pass = document.getElementById("bip39pass").innerHTML;
 
   wallet.loadDevice({
-    mnemonic: $inputmem,
-    passphrase: true,
+    mnemonic: $seedphrase,
+    passphrase: $bip39pass,
     pin: true,
-    label: $inputlabel,
+    label: $seedlabel,
     // /*Test seed:*/ "banana cat attract immune promote dilemma join mosquito glow educate square donate tag adult piece swim battle category deposit strong month goose speak stomach",
   });
 
-  // wallet.applySettings({    
+  // wallet.applySettings({
   //   label: $inputlabel,
   //   usePassphrase: true,
   //   autoLockDelayMs: 60000,
   // });
 
-  document.getElementById("#popupinput").className = "modale closed";
-  $pairtitle.text("✅ New Seed Phrase Setup!");
+  document.getElementById("#popupsure").className = "modale closed";
+  $pairtitle.text("✅ New Seed Phrase Setup! Refresh");
   $recovery.hide();
   $reset.hide();
+  $pinswap.hide();
+
+});
+
+$submitload.on("click", async (e) => {
+  e.preventDefault();
+  if (!wallet) {
+    $pairtitle.text("No wallet?");
+    return;
+  }
+
+  const $inputmem = document.getElementById("inputmem").value;
+  const $inputlabel = document.getElementById("inputlabel").value;
+  const $selectedpass = document.querySelector('#inputpass').value;
+
+  const $seedinfo = $("#seedinfo");
+
+  if ($inputmem == "")
+  {
+    $seedinfo.text("Please enter a seed phrase");
+    return;
+  }
+
+  if ($inputlabel == "")
+  {
+    $seedinfo.text("Please enter a label");
+    return;
+  }
+  
+  if ($inputmem.trim().split(/\s+/g).length < 12) {
+    $seedinfo.text("Seed Phrase must be a valid BIP39 12 or 18 or 24 word phrase!");
+    return;
+  }
+
+  document.getElementById("#popupinput").className = "modale closed";
+  document.getElementById("#popupsure").className = "modale opened";
+
+  const $seedphrase1 = $("#seedphrase");
+  const $seedlabel1 = $("#seedlabel");
+  const $bip39pass1 = $("#bip39pass");
+
+  $seedphrase1.text($inputmem);
+  $seedlabel1.text($inputlabel);
+  $bip39pass1.text($selectedpass);
+  $seedphrase1.val($inputmem);
+  $seedlabel1.val($inputlabel);
+  $bip39pass1.val($selectedpass);
+
+  // $pairtitle.text("✅ New Seed Phrase Setup! Refresh");
+  // $recovery.hide();
+  // $reset.hide();
+  // $pinswap.hide();
 
 });
 

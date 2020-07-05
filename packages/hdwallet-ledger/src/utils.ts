@@ -609,4 +609,23 @@ export const networksUtil = {
       wif: 128,
     },
   },
+  116: {
+    name: "denarius",
+    satoshi: 8,
+    unit: "Ð",
+    apiName: "d",
+    appName: "Denarius",
+    bitcoinjs: {
+      messagePrefix: "Denarius Signed Message:",
+      bip32: {
+        public: {
+          p2pkh: 49990397,
+        },
+        private: 87393172,
+      },
+      pubKeyHash: 30,
+      scriptHash: 90,
+      wif: 128,
+    },
+  },
 };

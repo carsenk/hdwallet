@@ -23,6 +23,7 @@ const supportedCoins = [
   "Dash",
   "DigiByte",
   "Dogecoin",
+  "Denarius",
 ];
 
 const segwitCoins = [

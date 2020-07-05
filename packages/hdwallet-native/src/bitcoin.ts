@@ -11,6 +11,7 @@ const supportedCoins = [
   "dash",
   "digibyte",
   "dogecoin",
+  "denarius",
   "litecoin",
   "testnet",
 ];
@@ -85,6 +86,7 @@ export function MixinNativeBTCWalletInfo<TBase extends core.Constructor>(
         dash: [bip44],
         digibyte: [bip44, bip49, bip84],
         dogecoin: [bip44],
+        denarius: [bip44],
         litecoin: [bip44, bip49, bip84],
         testnet: [bip44, bip49, bip84],
       };

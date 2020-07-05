@@ -47,6 +47,7 @@ class NativeHDWalletInfo
       case "dash":
       case "digibyte":
       case "dogecoin":
+      case "denarius":
       case "litecoin":
       case "testnet":
         const unknown = core.unknownUTXOPath(

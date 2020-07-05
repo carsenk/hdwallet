@@ -13,12 +13,16 @@
         "hex": "473044022003ddac31ed3d2dffc50169c0bcece812207876467d9863d78d6064d92349b915022066fc8187ec60dbff205878c570e13f7ca5377ebb8b5181d206a844f968942de6012103f5b29d1f63e06568912c4ca0ca2bf8827ed2bef532446ef3d379590e0d3316ae"
       },
       "sequence": 4294967295,
+	  "n": 0,
+	  "addr": "DMicSbP8Jt7LZ38QSfco8q3uKCrjPbMD29",
+	  "valueSat": 1049400,
+      "value": 0.10494000,
 	  "doubleSpentTxID": null
     }
   ],
   "vout": [
     {
-      "value": 0.009,
+      "value": "0.009",
       "n": 0,
       "scriptPubKey": {
         "asm": "OP_DUP OP_HASH160 032c2288699a64540e81e9980b3e6598040ba102 OP_EQUALVERIFY OP_CHECKSIG",
@@ -31,7 +35,7 @@
       }
     },
     {
-      "value": 0.09593,
+      "value": "0.09593",
       "n": 1,
       "scriptPubKey": {
         "asm": "OP_DUP OP_HASH160 5ef9da5d87a0c17eb8dc08ad4c14ab948af8777b OP_EQUALVERIFY OP_CHECKSIG",
@@ -45,5 +49,7 @@
     }
   ],
   "blockhash": "0000000017238a5befc1d0b6cbd1057863f26d2f3eead225195ffe27be717eb2",
-  "confirmations": 3590
+  "confirmations": 3590,
+  "valueOut": 0.10493000,
+  "valueIn": 0.10494000
 }

@@ -214,7 +214,7 @@ function prepareSignTx(
   const txmap = {}; // Create a map of transactions by txid needed for the KeepKey signing flow.
   txmap["unsigned"] = unsignedTx;
 
-  console.log('UNSIGNED TRANSACTION!!!!!!!!!!!!!!!!!!!!!!!!!\n' + unsignedTx);
+  console.log('UNSIGNED TRANSACTION!!!!!!!!!!!!!!!!!!!!!!!!!\n' + txmap["unsigned"]);
 
   const forceBip143Coins = ["BitcoinGold", "BitcoinCash", "BitcoinSV"];
   if (forceBip143Coins.includes(coin)) return txmap;
@@ -247,6 +247,7 @@ function prepareSignTx(
         txInput.setSequence(vin.sequence);
       } else {
         txInput.setPrevHash(fromHexString(vin.txid));
+        console.log(fromHexString(vin.txid));
         txInput.setPrevIndex(vin.vout);
         txInput.setScriptSig(fromHexString(vin.scriptSig.hex));
         txInput.setSequence(vin.sequence);
@@ -288,6 +289,8 @@ function prepareSignTx(
 
     txmap[inputTx.txid] = tx;
   });
+
+  console.log('Setup FOR SIGNING!!!!!!!!', txmap);
 
   return txmap;
 }
@@ -388,6 +391,7 @@ export async function btcSignTx(
       while (true) {
         if (responseType === MessageType.MESSAGETYPE_FAILURE) {
           const errorResponse = response as Failure;
+          console.log('HITTING FAILURE MESSAGE AT BEGINNING OF CALLBACK LOOP!!!!!')
           throw new Error(`Signing failed: ${errorResponse.getMessage()}`);
         }
 
@@ -398,31 +402,19 @@ export async function btcSignTx(
         let txRequest = response as TxRequest;
 
         // If there's some part of signed transaction, add it
-        if (
-          txRequest.hasSerialized() &&
-          txRequest.getSerialized().hasSerializedTx()
-        ) {
-          serializedTx += toHexString(
-            txRequest.getSerialized().getSerializedTx_asU8()
-          );
+        if (txRequest.hasSerialized() && txRequest.getSerialized().hasSerializedTx()) {
+          serializedTx += toHexString(txRequest.getSerialized().getSerializedTx_asU8());
         }
 
-        if (
-          txRequest.hasSerialized() &&
-          txRequest.getSerialized().hasSignatureIndex()
-        ) {
-          if (
-            signatures[txRequest.getSerialized().getSignatureIndex()] !== null
-          ) {
+        if (txRequest.hasSerialized() && txRequest.getSerialized().hasSignatureIndex()) {
+          if (signatures[txRequest.getSerialized().getSignatureIndex()] !== null) {
             throw new Error(
               `Signature for index ${txRequest
                 .getSerialized()
                 .getSignatureIndex()} already filled`
             );
           }
-          signatures[
-            txRequest.getSerialized().getSignatureIndex()
-          ] = toHexString(txRequest.getSerialized().getSignature_asU8());
+          signatures[txRequest.getSerialized().getSignatureIndex()] = toHexString(txRequest.getSerialized().getSignature_asU8());
         }
 
         if (txRequest.getRequestType() === RequestType.TXFINISHED) {
@@ -438,8 +430,7 @@ export async function btcSignTx(
         if (txRequest.hasDetails() && !txRequest.getDetails().hasTxHash()) {
           currentTx = txmap["unsigned"];
         } else {
-          currentTx =
-            txmap[toHexString(txRequest.getDetails().getTxHash_asU8())];
+          currentTx = txmap[toHexString(txRequest.getDetails().getTxHash_asU8())];
         }
 
         if (txRequest.getRequestType() === RequestType.TXMETA) {
@@ -472,9 +463,7 @@ export async function btcSignTx(
 
         if (txRequest.getRequestType() === RequestType.TXINPUT) {
           msg = new TransactionType();
-          msg.setInputsList([
-            currentTx.getInputsList()[txRequest.getDetails().getRequestIndex()],
-          ]);
+          msg.setInputsList([currentTx.getInputsList()[txRequest.getDetails().getRequestIndex()],]);
           txAck = new TxAck();
           txAck.setTx(msg);
           let message = (await transport.call(
@@ -539,7 +528,7 @@ export async function btcSignTx(
       }
     } catch (error) {
       console.error({ error });
-      throw new Error("KeepKey Failed to Sign Denarius transaction");
+      throw new Error("KeepKey Failed to Sign the transaction");
     }
 
     if (signatures.includes(null)) {
@@ -647,7 +636,7 @@ export function btcGetAccountPaths(
       Dash: [bip44],
       DigiByte: [bip44, bip49, bip84],
       Dogecoin: [bip44],
-      Denairus: [bip44],
+      Denarius: [bip44],
       Testnet: [bip44, bip49, bip84],
       BitcoinCash: [bip44, btcLegacy],
       BitcoinSV: [bip44, bchLegacy, btcLegacy],
